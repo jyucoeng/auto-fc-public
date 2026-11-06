@@ -56,7 +56,7 @@ on:
       phase:
         description: "阶段"
         type: choice
-        options: [auto, open, maintain]
+        options: [auto, open, delay, maintain]
         default: auto
       force:
         description: "忽略到期检查，强制执行"
