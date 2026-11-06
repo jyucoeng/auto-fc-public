@@ -31,7 +31,15 @@ Settings → Secrets and variables → Actions：
 | `FC_TG_CHAT` | 可选 | Telegram 会话 id，多个用逗号分隔 |
 | `HY2_PROXY_URL` | 可选 | 登录用的节点 URL（`hy2://` `vless://` `trojan://` `ss://` `tuic://` `anytls://`） |
 
-Variables（可选）：`FC_INTERVAL_DAYS`（默认 29）、`FC_DUE_DAYS`（默认 2）。
+Variables（可选）：
+
+| Variable | 默认 | 说明 |
+| --- | --- | --- |
+| `FC_MODE` | `delay` | `delay` = 到期点「延长 72 小时」（不动实例）；`rebuild` = 备份镜像 + 退订重建 |
+| `FC_INTERVAL_DAYS` | `29` | 重建周期（仅 `rebuild` 用） |
+| `FC_DUE_DAYS` | `2` | 距到期几天动手（仅 `rebuild` 用） |
+
+不配 `FC_MODE` 就是延期：每 3 天点一次「延长 72 小时」，实例和端口都不动。
 
 ## 跑法
 

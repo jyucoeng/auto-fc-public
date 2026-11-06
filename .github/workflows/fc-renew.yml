@@ -33,8 +33,12 @@
 #                        hy2:// vless:// trojan:// ss:// tuic:// anytls://
 #
 # Variables（可选，各账号共用）
+#   FC_MODE                delay（默认）| rebuild
+#                          delay   = 到期点「延长 72 小时」，不动机器、不做镜像
+#                          rebuild = 备份镜像 → 退订 → 用镜像重开
+#                          不配就是 delay
 #   FC_INTERVAL_DAYS       默认 29
-#   FC_DUE_DAYS            默认 2（→ 开通第 29 天动手）
+#   FC_DUE_DAYS            默认 2（→ 开通第 29 天动手，仅 rebuild 用）
 # =============================================================================
 
 name: 🔄 FC 实例重建 ①          # ① 复制后改成 ②③…
@@ -89,6 +93,11 @@ jobs:
       # ── 登录代理 ──────────────────────────────────────────────────────
       PROXY_CONTENT: ${{ secrets.HY2_PROXY_URL }}
       SOCKS_PORT: '10808'
+      # ── 模式 ──────────────────────────────────────────────────────────
+      # delay   = 到期点「延长 72 小时」（默认，不动实例、不做镜像）
+      # rebuild = 备份镜像 → 退订 → 用镜像重开（老流程）
+      # 不配这个 Variable 就跑延期。
+      FC_MODE: ${{ vars.FC_MODE || 'delay' }}
       # ── 周期 ──────────────────────────────────────────────────────────
       FC_INTERVAL_DAYS: ${{ vars.FC_INTERVAL_DAYS || '29' }}
       FC_DUE_DAYS: ${{ vars.FC_DUE_DAYS || '2' }}
