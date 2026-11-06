@@ -98,6 +98,9 @@ jobs:
       # rebuild = 备份镜像 → 退订 → 用镜像重开（老流程）
       # 不配这个 Variable 就跑延期。
       FC_MODE: ${{ vars.FC_MODE || 'delay' }}
+      # 剩余延长期不足这么多小时才点下一次（默认 48）。
+      # 每天跑一次 + 48 小时窗口 = 隔一天才可能点到，点得越稀越不像脚本。
+      FC_EXTEND_KEEP_HOURS: ${{ vars.FC_EXTEND_KEEP_HOURS || '48' }}
       # ── 周期 ──────────────────────────────────────────────────────────
       FC_INTERVAL_DAYS: ${{ vars.FC_INTERVAL_DAYS || '29' }}
       FC_DUE_DAYS: ${{ vars.FC_DUE_DAYS || '2' }}
