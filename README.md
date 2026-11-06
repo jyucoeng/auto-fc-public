@@ -6,9 +6,9 @@
 本仓库只放两样东西：
 
 ```
-.github/workflows/fc-renew.yml     账号 ①（每天 UTC 19:23）
-.github/workflows/fc-renew-2.yml   账号 ②（每天 UTC 19:41）
-.github/workflows/fc-renew-3.yml   账号 ③（每天 UTC 19:59）
+.github/workflows/fc-renew.yml     账号 ①（每天 UTC 13:33 = 北京 21:33）
+.github/workflows/fc-renew-2.yml   账号 ②（同上）
+.github/workflows/fc-renew-3.yml   账号 ③（同上）
 fc/N/time.txt                      保活提交（防 60 天无活动被停用定时任务）
 ```
 
@@ -16,6 +16,21 @@ fc/N/time.txt                      保活提交（防 60 天无活动被停用�
 
 - 公开仓库的 Actions 分钟数不计费，定时任务也不会因为「仓库 60 天没活动」被自动停用；
 - 私有仓库只存代码和 Secrets，不暴露运行记录、日志和账号信息。
+
+## 延期 / 重建怎么切
+
+环境变量 `FC_MODE`，三个来源优先级从高到低：
+
+1. 手动 Run workflow 时填的 `mode`（下拉旁的输入框，留空即用下一条）
+2. 仓库 Settings → Secrets and variables → Actions → **Variables** 里的 `FC_MODE`
+3. 都没有就是 `delay`
+
+| 值 | 行为 |
+| --- | --- |
+| `delay`（默认） | 只点面板上隐藏的「延长 72 小时」，不动机器、不做镜像 |
+| `rebuild` | 老流程：备份镜像 → 退订 → 用镜像重开 → 端口挂回 |
+
+配套的 `FC_EXTEND_KEEP_HOURS`（默认 48）：距离关机小于这么多小时才点下一次。
 
 ## 需要的 Secrets
 

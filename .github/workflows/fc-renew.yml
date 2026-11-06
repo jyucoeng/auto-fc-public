@@ -50,10 +50,9 @@ on:
   schedule:
     # ② 每个账号的触发时间错开，别挤在同一分钟。
     #    cron 用 UTC，+8 小时才是北京时间；也避开整点，减少和其他任务撞车。
-    #    第 1 个：23 19 * * *  → 北京 次日 03:23
-    #    第 2 个：41 19 * * *  → 北京 次日 03:41
-    #    第 3 个：59 19 * * *  → 北京 次日 03:59
-    - cron: '23 19 * * *'
+    #    统一 33 13 * * * → 北京 21:33（延期窗口宽 48 小时，三个号同点也不冲突：
+    #    concurrency 按 workflow 名互斥，各跑各的）
+    - cron: '33 13 * * *'
   workflow_dispatch:
     inputs:
       phase:
@@ -69,6 +68,10 @@ on:
         description: "只体检，不动手"
         type: boolean
         default: false
+      mode:
+        description: "模式：delay=点延长72小时 / rebuild=镜像重建（留空 = 用仓库变量 FC_MODE，默认 delay）"
+        type: string
+        default: ""
 
 permissions:
   contents: write     # 最后要提交 time.txt 保活
@@ -100,7 +103,11 @@ jobs:
       # delay   = 到期点「延长 72 小时」（默认，不动实例、不做镜像）
       # rebuild = 备份镜像 → 退订 → 用镜像重开（老流程）
       # 不配这个 Variable 就跑延期。
-      FC_MODE: ${{ vars.FC_MODE || 'delay' }}
+      # 延期 / 重建的开关。三个来源，优先级从高到低：
+      #   ① 手动 Run workflow 时填的 mode
+      #   ② 仓库 Settings → Variables 里的 FC_MODE
+      #   ③ 都没有就 delay（只点「延长 72 小时」）
+      FC_MODE: ${{ inputs.mode || vars.FC_MODE || 'delay' }}
       # 剩余延长期不足这么多小时才点下一次（默认 48）。
       # 每天跑一次 + 48 小时窗口 = 隔一天才可能点到，点得越稀越不像脚本。
       FC_EXTEND_KEEP_HOURS: ${{ vars.FC_EXTEND_KEEP_HOURS || '48' }}
