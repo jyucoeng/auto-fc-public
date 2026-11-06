@@ -68,10 +68,6 @@ on:
         description: "只体检，不动手"
         type: boolean
         default: false
-      mode:
-        description: "模式：delay=点延长72小时 / rebuild=镜像重建（留空 = 用仓库变量 FC_MODE，默认 delay）"
-        type: string
-        default: ""
 
 permissions:
   contents: write     # 最后要提交 time.txt 保活
@@ -103,11 +99,8 @@ jobs:
       # delay   = 到期点「延长 72 小时」（默认，不动实例、不做镜像）
       # rebuild = 备份镜像 → 退订 → 用镜像重开（老流程）
       # 不配这个 Variable 就跑延期。
-      # 延期 / 重建的开关。三个来源，优先级从高到低：
-      #   ① 手动 Run workflow 时填的 mode
-      #   ② 仓库 Settings → Variables 里的 FC_MODE
-      #   ③ 都没有就 delay（只点「延长 72 小时」）
-      FC_MODE: ${{ inputs.mode || vars.FC_MODE || 'delay' }}
+      # 延期(delay) 还是 重建(rebuild)。不配就是 delay
+      FC_MODE: ${{ vars.FC_MODE || 'delay' }}
       # 剩余延长期不足这么多小时才点下一次（默认 48）。
       # 每天跑一次 + 48 小时窗口 = 隔一天才可能点到，点得越稀越不像脚本。
       FC_EXTEND_KEEP_HOURS: ${{ vars.FC_EXTEND_KEEP_HOURS || '48' }}

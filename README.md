@@ -19,18 +19,16 @@ fc/N/time.txt                      保活提交（防 60 天无活动被停用�
 
 ## 延期 / 重建怎么切
 
-环境变量 `FC_MODE`，三个来源优先级从高到低：
+一个变量：**`FC_MODE`**，写在仓库 Settings → Secrets and variables → Actions → **Variables**。
+不配就是 `delay`。
 
-1. 手动 Run workflow 时填的 `mode`（下拉旁的输入框，留空即用下一条）
-2. 仓库 Settings → Secrets and variables → Actions → **Variables** 里的 `FC_MODE`
-3. 都没有就是 `delay`
-
-| 值 | 行为 |
+| 值 | 做什么 |
 | --- | --- |
-| `delay`（默认） | 只点面板上隐藏的「延长 72 小时」，不动机器、不做镜像 |
-| `rebuild` | 老流程：备份镜像 → 退订 → 用镜像重开 → 端口挂回 |
+| `delay`（默认） | 只点面板上那个「延长 72 小时」，机器不动、不做镜像 |
+| `rebuild` | 老流程：备份镜像 → 退订 → 用镜像重开 |
 
-配套的 `FC_EXTEND_KEEP_HOURS`（默认 48）：距离关机小于这么多小时才点下一次。
+只想跑一次、不想改变量的话，手动 Run workflow 时把 `phase` 选成 `delay` 或 `maintain` 就行。
+配错了值也不会挂，日志里会告警一行然后按 `delay` 跑。
 
 ## 需要的 Secrets
 
